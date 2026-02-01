@@ -11,7 +11,7 @@ For now using report ids in the descriptor
 * Author(s): Björn Bösel
 """
 
-from typing import Sequence, Dict
+from typing import Optional, Sequence, Dict
 from pathlib import Path
 import os
 import atexit
@@ -90,13 +90,13 @@ class Device:
     https://github.com/adafruit/circuitpython/blob/main/shared-bindings/usb_hid/Device.c
     """
 
-    KEYBOARD = None
-    BOOT_KEYBOARD = None
-    MOUSE = None
-    BOOT_MOUSE = None
-    CONSUMER_CONTROL = None
-    GAMEPAD = None
-    DIGITIZER = None
+    KEYBOARD = None  # type: Optional[Device]
+    BOOT_KEYBOARD = None  # type: Optional[Device]
+    MOUSE = None  # type: Optional[Device]
+    BOOT_MOUSE = None  # type: Optional[Device]
+    CONSUMER_CONTROL = None  # type: Optional[Device]
+    GAMEPAD = None  # type: Optional[Device]
+    DIGITIZER = None  # type: Optional[Device]
 
     _device_fds: Dict[str, int] = {}  # Cache for file descriptors
 
@@ -118,8 +118,8 @@ class Device:
         self.usage_page = usage_page
         self.descriptor = descriptor
         self.name = name
-        self.path = None
-        self._last_received_report = None
+        self.path = ""
+        self._last_received_report = bytes()
 
     def __str__(self):
         return f"{self.name} ({self.path})"
@@ -167,7 +167,7 @@ class Device:
         device_path = "/dev/hidg%s" % device
         return device_path
 
-    def send_report(self, report: bytearray, report_id: int = None):
+    def send_report(self, report: bytearray, report_id: Optional[int] = None):
         """Send an HID report. If the device descriptor specifies zero or one report id's,
         you can supply `None` (the default) as the value of ``report_id``.
         Otherwise you must specify which report id to use when sending the report.
@@ -207,7 +207,7 @@ class Device:
                 pass  # Ignore errors during close
             del self._device_fds[device_path]
 
-    def send_report_nonblocking(self, report: bytearray, report_id: int = None) -> None:
+    def send_report_nonblocking(self, report: bytearray, report_id: Optional[int] = None) -> None:
         """
         Send an HID report using non-blocking I/O.
 
@@ -750,8 +750,10 @@ def enable(requested_devices: Sequence[Device], boot_device: int = 0) -> None:
         return
 
     if boot_device == 1:
+        assert Device.BOOT_KEYBOARD is not None, "BOOT_KEYBOARD device not defined"
         requested_devices = [Device.BOOT_KEYBOARD]
     if boot_device == 2:
+        assert Device.BOOT_MOUSE is not None, "BOOT_MOUSE device not defined"
         requested_devices = [Device.BOOT_MOUSE]
 
     # """
