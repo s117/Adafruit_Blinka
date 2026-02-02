@@ -900,8 +900,13 @@ def enable(requested_devices: Sequence[Device], boot_device: int = 0) -> None:
             Path("%s/protocol" % function_root).write_text(
                 "%s" % report_id, encoding="utf-8"
             )
+            # Accounting for Report ID byte
+            w_max_packet_size = device.in_report_lengths[report_index]
+            report_has_id_prefix = any(rid != 0 for rid in device.report_ids)
+            if report_has_id_prefix:
+                w_max_packet_size += 1  # account for report ID byte
             Path("%s/report_length" % function_root).write_text(
-                "%s" % device.in_report_lengths[report_index], encoding="utf-8"
+                "%s" % w_max_packet_size, encoding="utf-8"
             )
             Path("%s/subclass" % function_root).write_text("%s" % 1, encoding="utf-8")
             Path("%s/report_desc" % function_root).write_bytes(device.descriptor)
