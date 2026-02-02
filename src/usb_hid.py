@@ -964,7 +964,7 @@ def enable(requested_devices: Sequence[Device], boot_device: int = 0) -> None:
                 "%s" % device.protocol, encoding="utf-8"
             )
             # Accounting for Report ID byte
-            w_max_packet_size = device.in_report_lengths[report_index]
+            w_max_packet_size = device.in_report_lengths[report_index] + 1
             report_has_id_prefix = any(rid != 0 for rid in device.report_ids)
             if report_has_id_prefix:
                 w_max_packet_size += 1  # account for report ID byte
