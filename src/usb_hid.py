@@ -312,6 +312,8 @@ Device.MOUSE = Device(
             # fmt: off
             0x05, 0x01,  # Usage Page (Generic Desktop Ctrls)
             0x09, 0x02,  # Usage (Mouse)
+            0xA4,        # Push
+            ##### Basic Mouse Report (ID=0x02, 4 bytes)    ######
             0xA1, 0x01,  # Collection (Application)
             0x85, 0x02,  # Report ID (2)
             0x09, 0x01,  # Usage (Pointer)
@@ -340,13 +342,47 @@ Device.MOUSE = Device(
             0x81, 0x06,  # Input (Data,Var,Rel,No Wrap,Linear,Preferred State,No Null Position)
             0xC0,        # End Collection (Physical)
             0xC0,        # End Collection (Application)
+            0xB4,        # Pop
+            ##### Extended Mouse Report (ID=0x82, 7 bytes) ######
+            0xA1, 0x01,        # Collection (Application)
+            0x85, 0x82,        # Report ID (130)
+            0x09, 0x01,        # Usage (Pointer)
+            0xA1, 0x00,        # Collection (Physical)
+            0x75, 0x01,        # Report Size (1)
+            0x15, 0x00,        # Logical Minimum (0)
+            0x25, 0x01,        # Logical Maximum (1)
+            0x95, 0x08,        # Report Count (8)
+            0x05, 0x09,        # Usage Page (Button)
+            0x19, 0x01,        # Usage Minimum (0x01)
+            0x29, 0x08,        # Usage Maximum (0x08)
+            0x81, 0x02,        # Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
+            0x75, 0x10,        # Report Size (16)
+            0x16, 0x01, 0x80,  # Logical Minimum (-32767)
+            0x26, 0xFF, 0x7F,  # Logical Maximum (32767)
+            0x95, 0x02,        # Report Count (2)
+            0x05, 0x01,        # Usage Page (Generic Desktop Ctrls)
+            0x09, 0x30,        # Usage (X)
+            0x09, 0x31,        # Usage (Y)
+            0x81, 0x06,        # Input (Data,Var,Rel,No Wrap,Linear,Preferred State,No Null Position)
+            0x75, 0x08,        # Report Size (8)
+            0x15, 0x81,        # Logical Minimum (-127)
+            0x25, 0x7F,        # Logical Maximum (127)
+            0x95, 0x01,        # Report Count (1)
+            0x09, 0x38,        # Usage (Wheel)
+            0x81, 0x06,        # Input (Data,Var,Rel,No Wrap,Linear,Preferred State,No Null Position)
+            0x05, 0x0C,        # Usage Page (Consumer)
+            0x0A, 0x38, 0x02,  # Usage (Application Controls - Pan)
+            0x81, 0x06,        # Input (Data,Var,Rel,No Wrap,Linear,Preferred State,No Null Position)
+            0xC0,              # End Collection (Physical)
+            0xC0,
+            # End Collection (Application)
             # fmt: on
         )
     ),
     usage_page=0x1,
     usage=0x02,
-    report_ids=[0x02],
-    in_report_lengths=[4],
+    report_ids=[0x02, 0x82],
+    in_report_lengths=[4, 7],
     out_report_lengths=[0],
     name="mouse gadget",
 )
